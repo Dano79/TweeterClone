@@ -25,6 +25,7 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
     TextView txtGetData;
     Button btnGetAllData;
     String allKickBoxers;
+    Button btnTransition;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -42,6 +43,7 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
         edtPunchPower = findViewById(R.id.edtPunchPower);
         txtGetData = findViewById(R.id.txtGetData);
         btnGetAllData = findViewById(R.id.btnGetAllData);
+        btnTransition = findViewById(R.id.btnNextActivity);
 
         txtGetData.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -53,7 +55,7 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
 
                         if (object != null && e == null) {
 
-                            txtGetData.setText(object.get("name") + " - " + "Punch Power: " + object.get("punch_power"));
+                            txtGetData.setText(String.format("%s - Punch Power: %s", object.get("name"), object.get("punch_power")));
                         }
                     }
                 });
@@ -66,6 +68,11 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
 
                 allKickBoxers = "";
                 ParseQuery<ParseObject> queryAll = ParseQuery.getQuery("KickBalls");
+
+                queryAll.whereGreaterThan("punch_power", 100);
+                queryAll.whereGreaterThanOrEqualTo("punch_power", 3000);
+                queryAll.setLimit(1);
+
                 queryAll.findInBackground(new FindCallback<ParseObject>() {
                     @Override
                     public void done(List<ParseObject> objects, ParseException e) {
@@ -74,7 +81,7 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
                             if (objects.size() > 0) {
 
                                 for (ParseObject kickBoxer : objects) {
-                                    allKickBoxers = allKickBoxers + kickBoxer.get("name") + "\n";
+                                    allKickBoxers = String.format("%s%s\n", allKickBoxers, kickBoxer.get("name"));
                                 }
 
                                 FancyToast.makeText(MainActivity.this, allKickBoxers,FancyToast.LENGTH_LONG, FancyToast.SUCCESS, true).show();
@@ -84,6 +91,13 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
                         }
                     }
                 });
+            }
+        });
+
+        btnTransition.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+
             }
         });
     }
